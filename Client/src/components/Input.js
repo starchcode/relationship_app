@@ -3,8 +3,9 @@ import "./input.css";
 const Input = () => {
   return (
     <div>
-     
+
       <button className="btn center">Submit a Relationship</button>
+      <button className="btn center">Search</button>
 
       <div className="inputComponent flex">
         <div className="inputnbtn">

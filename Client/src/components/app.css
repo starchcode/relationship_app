@@ -24,6 +24,9 @@ h1{
 .wrap {
     flex-flow: row wrap;
 }
+button{
+    cursor: pointer;
+}
 .btn{
     background-color: white;
     border-radius: 1rem;
@@ -31,13 +34,20 @@ h1{
     font-size: 0.8rem;
     margin: 0 0.5rem;
     border: 1px solid #262626;
+    transition: background-color 0.3s 0.1s;
 }
 .btn:focus{
     outline: none;
     /* border: 1px solid chocolate;
     color: chocolate;  */
 }
+.allItems .btn:hover{
+    background-color: rgb(245, 189, 245);
+}
+.selected{
+    background-color: rgb(245, 189, 245);
 
+}
 .item{
     margin-top: 0.5rem;
 }
