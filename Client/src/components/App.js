@@ -2,67 +2,17 @@ import { useState, useEffect } from "react";
 import "./app.css";
 
 import Input from "./Input";
+import Server from './Server';
+import Main from './Main';
 
-const people = [
-  {
-    id: 1,
-    name: "Dave",
-  },
-  {
-    id: 2,
-    name: "John",
-  },
-  {
-    id: 3,
-    name: "Brad",
-  },
-  {
-    id: 4,
-    name: "Zack",
-  },
-];
-const relationshipTags = [
-  {
-    id: 1,
-    tag: "brother",
-  },
-  {
-    id: 2,
-    tag: "father",
-  },
-  {
-    id: 3,
-    tag: "sister",
-  },
-  {
-    id: 4,
-    tag: "cousin",
-  },
-];
+let people= [];
+let relationshipTags = [];
 
 const App = () => {
 
   const [selectPerson, setSelectPerson] = useState([]);
   const [selectTag, setSelectTag] = useState([]);
-
-  const renderedPeople = people.map(({ name, id }) => {
-    const selected = selectPerson.find(personId => personId == id)
-    return (
-      <div>
-        <button key={id} identity={id} button-type='person' className={`btn item ${selected? 'selected': ''}`}>{name}</button>
-      </div>
-    );
-  });
-
-  const renderedRelationshipTags = relationshipTags.map(({ tag, id }) => {
-    const selected = selectTag.find(tagId => tagId == id)
-
-    return (
-      <div>
-        <button key={id} identity={id} button-type='tag' className={`btn item ${selected? 'selected': ''}`}>{tag}</button>
-      </div>
-    );
-  });
+  const [loaded, setLoaded] = useState(false);
 
  const relHandler = (e) => {
   let target = e.target.getAttribute('button-type');
@@ -94,6 +44,18 @@ const App = () => {
 
 useEffect(()=> {
   console.log('loaded')
+
+
+
+  const data = async () =>{
+await Server.get("/data").then( res =>{
+  setSelectTag(selectTag.concat(res.data.tags))
+  setSelectPerson(selectPerson.concat(res.data.people))
+  setLoaded(true);
+  console.log(selectPerson)
+})
+  }
+  data();
 }, [])
 
   return (
@@ -105,11 +67,7 @@ useEffect(()=> {
         relationship between them.
       </p>
 
-      <main className="flex" onClick={relHandler}>
-        <div className="flex wrap allItems">{renderedPeople}</div>
-        <div className="midLine"></div>
-        <div className="flex wrap allItems">{renderedRelationshipTags}</div>
-      </main>
+      <Main selectPerson={selectPerson} relationshipTags={relationshipTags} relHandler={relHandler} loaded={loaded} />
 
       <Input />
     </div>
