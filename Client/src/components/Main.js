@@ -1,6 +1,9 @@
-const Main = ({selectPerson, relationshipTags, loaded, relHandler}) => {
-  const renderedPeople = selectPerson.map(({ people, id }) => {
-    const selected = selectPerson.find((personId) => personId == id);
+const Main = ({people, relationshipTags, loaded, relHandler, selectPerson, selectTag}) => {
+
+  const renderedPeople = people.map(({ person, id }) => {
+
+    const selected = selectPerson.find( personId => personId == id);
+    console.log(people)
     return (
       <div>
         <button
@@ -9,14 +12,14 @@ const Main = ({selectPerson, relationshipTags, loaded, relHandler}) => {
           button-type="person"
           className={`btn item ${selected ? "selected" : ""}`}
         >
-          {people}
+          {person}
         </button>
       </div>
     );
   });
 
   const renderedRelationshipTags = relationshipTags.map(({ tag, id }) => {
-    const selected = relationshipTags.find((tagId) => tagId == id);
+    const selected = selectTag.find(tagId => tagId == id);
 
     return (
       <div>
@@ -33,7 +36,7 @@ const Main = ({selectPerson, relationshipTags, loaded, relHandler}) => {
   });
 
   return (
-    <main className="flex" onClick={relHandler}>
+    <main className="flex" onClick={e => relHandler(e)}>
       <div className="flex wrap allItems">
         {loaded ? renderedPeople : "loading..."}
       </div>

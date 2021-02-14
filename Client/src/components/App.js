@@ -2,61 +2,55 @@ import { useState, useEffect } from "react";
 import "./app.css";
 
 import Input from "./Input";
-import Server from './Server';
-import Main from './Main';
+import Server from "./Server";
+import Main from "./Main";
 
-let people= [];
+let people = [];
 let relationshipTags = [];
 
 const App = () => {
-
   const [selectPerson, setSelectPerson] = useState([]);
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
- const relHandler = (e) => {
-  let target = e.target.getAttribute('button-type');
-  let id = e.target.getAttribute('identity');
+  const relHandler = (e) => {
+    let target = e.target.getAttribute("button-type");
+    let id = e.target.getAttribute("identity");
 
-  if (e.target.nodeName !== 'BUTTON') return; //Do nothing if not a button
+    if (e.target.nodeName !== "BUTTON") return; //Do nothing if not a button
 
-  if(target === 'person'){
-    if(selectPerson.find(person => person == id)){
-      return null;
+    if (target === "person") {
+      if (selectPerson.find((person) => person == id)) {
+        return null;
+      }
+      if (selectPerson.length > 1) {
+        setSelectPerson(selectPerson.shift());
+      }
+      setSelectPerson(selectPerson.concat(id));
     }
-    if(selectPerson.length > 1){
-      setSelectPerson(selectPerson.shift());
+
+    if (target === "tag") {
+      if (selectTag.find((person) => person == id)) {
+        return null;
+      }
+      if (selectTag.length > 0) {
+        setSelectTag(selectTag.shift());
+      }
+      setSelectTag(selectTag.concat(id));
     }
-    setSelectPerson(selectPerson.concat(id));
-  }
+  };
 
-  if(target === 'tag'){
-    if(selectTag.find(person => person == id)){
-      return null;
-    }
-    if(selectTag.length > 0){
-      setSelectTag(selectTag.shift());
-    }
-    setSelectTag(selectTag.concat(id));
-  }
-
-  }
-
-useEffect(()=> {
-  console.log('loaded')
-
-
-
-  const data = async () =>{
-await Server.get("/data").then( res =>{
-  setSelectTag(selectTag.concat(res.data.tags))
-  setSelectPerson(selectPerson.concat(res.data.people))
-  setLoaded(true);
-  console.log(selectPerson)
-})
-  }
-  data();
-}, [])
+  useEffect(() => {
+    const data = async () => {
+      await Server.get("/data").then((res) => {
+        people = res.data.people;
+        relationshipTags = res.data.tags;
+        setLoaded(true);
+        console.log('loaded', people, relationshipTags);
+      });
+    };
+    data();
+  }, []);
 
   return (
     <div>
@@ -67,8 +61,14 @@ await Server.get("/data").then( res =>{
         relationship between them.
       </p>
 
-      <Main selectPerson={selectPerson} relationshipTags={relationshipTags} relHandler={relHandler} loaded={loaded} />
-
+       <Main
+        people={people}
+        relationshipTags={relationshipTags}
+        relHandler={relHandler}
+        selectPerson={selectPerson}
+        selectTag={selectTag}
+        loaded={loaded}
+      />
       <Input />
     </div>
   );
