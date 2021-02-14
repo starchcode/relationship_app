@@ -5,14 +5,17 @@ import Input from "./Input";
 import Server from "./Server";
 import Main from "./Main";
 
-let people = [];
-let relationshipTags = [];
 
 const App = () => {
+  const [people, setPeople] = useState([])
+  const [relationshipTags, setRelationshipTags] = useState([]);
   const [selectPerson, setSelectPerson] = useState([]);
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [newPerson, NewPerson] = useState('');
+  const [newTag, setNewTag] = useState('');
 
+//Select people and tags
   const relHandler = (e) => {
     let target = e.target.getAttribute("button-type");
     let id = e.target.getAttribute("identity");
@@ -40,17 +43,33 @@ const App = () => {
     }
   };
 
+//Fetch Data
+const data = async () => {
+  await Server.get("/data").then((res) => {
+    setPeople(res.data.people); 
+    setRelationshipTags(res.data.tags); 
+    setLoaded(true);
+    console.log('loaded', people, relationshipTags);
+  });
+};
   useEffect(() => {
-    const data = async () => {
-      await Server.get("/data").then((res) => {
-        people = res.data.people;
-        relationshipTags = res.data.tags;
-        setLoaded(true);
-        console.log('loaded', people, relationshipTags);
-      });
-    };
     data();
   }, []);
+
+const insertData = async (newData, table)=> {
+  const request = await Server.post('/add',
+  {
+    newData: newData,
+    table: table
+  }).then(res=> {
+    if(res.status < 400 && res.data.person == newData){
+      console.log('new data ', newData, ' added to table ', table);
+      data();
+    }
+  }).catch(e => {
+    console.log(e.response.data.message);
+  })
+}
 
   return (
     <div>
@@ -69,7 +88,8 @@ const App = () => {
         selectTag={selectTag}
         loaded={loaded}
       />
-      <Input />
+      <Input
+      insertData={insertData} />
     </div>
   );
 };
