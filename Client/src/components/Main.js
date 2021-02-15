@@ -3,7 +3,6 @@ const Main = ({people, relationshipTags, loaded, relHandler, selectPerson, selec
   const renderedPeople = people.map(({ person, id }) => {
 
     const selected = selectPerson.find( personId => personId == id);
-    console.log(people)
     return (
       <div>
         <button
@@ -41,7 +40,7 @@ const Main = ({people, relationshipTags, loaded, relHandler, selectPerson, selec
         {loaded ? renderedPeople : "loading..."}
       </div>
       <div className="midLine"></div>
-      <div className="flex wrap allItems">
+      <div className="flex wrap allItems" division='tagSide'>
         {loaded ? renderedRelationshipTags : "loading..."}
       </div>
     </main>

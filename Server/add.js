@@ -8,12 +8,12 @@ add.post('/', (req, res)=> {
     const column = req.body.table == 'people'? 'person': 'tag'; //people or tag column
     //  const relationshipColumn 
 
-    db.run(`INSERT INTO ${table} (person) VALUES($person)`, 
+    db.run(`INSERT INTO ${table} (${column}) VALUES($person)`, 
     {
         $person: req.body.newData
     }, function(err){
         if(err) {
-            console.log(err.code);
+            console.log(err);
 
             return res.status(403).send({
                 message: err.code

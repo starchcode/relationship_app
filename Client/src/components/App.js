@@ -12,14 +12,16 @@ const App = () => {
   const [selectPerson, setSelectPerson] = useState([]);
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [newPerson, NewPerson] = useState('');
-  const [newTag, setNewTag] = useState('');
+  const [tagToEdit, setTagToEdit] = useState('')
 
 //Select people and tags
   const relHandler = (e) => {
     let target = e.target.getAttribute("button-type");
     let id = e.target.getAttribute("identity");
+    let division = e.target.getAttribute('division')
+    // console.log(val);
 
+    if(division == 'tagSide') setSelectTag([]) //unselect
     if (e.target.nodeName !== "BUTTON") return; //Do nothing if not a button
 
     if (target === "person") {
@@ -33,7 +35,8 @@ const App = () => {
     }
 
     if (target === "tag") {
-      if (selectTag.find((person) => person == id)) {
+      setTagToEdit(e.target.innerText);
+      if (selectTag.find((tag) => tag == id)) {
         return null;
       }
       if (selectTag.length > 0) {
@@ -46,10 +49,11 @@ const App = () => {
 //Fetch Data
 const data = async () => {
   await Server.get("/data").then((res) => {
+    console.log(res.data.people)
     setPeople(res.data.people); 
     setRelationshipTags(res.data.tags); 
     setLoaded(true);
-    console.log('loaded', people, relationshipTags);
+    // console.log('loaded', people, relationshipTags);
   });
 };
   useEffect(() => {
@@ -62,8 +66,12 @@ const insertData = async (newData, table)=> {
     newData: newData,
     table: table
   }).then(res=> {
-    if(res.status < 400 && res.data.person == newData){
-      console.log('new data ', newData, ' added to table ', table);
+    if(res.status < 400){
+      if(res.data.person == newData){
+        console.log('new data ', newData, ' added to table ', table);
+      }else if(res.data.tag == newData){
+        console.log('new data ', newData, ' added to table ', table);
+      }
       data();
     }
   }).catch(e => {
@@ -89,7 +97,11 @@ const insertData = async (newData, table)=> {
         loaded={loaded}
       />
       <Input
-      insertData={insertData} />
+      insertData={insertData}
+      tagToEdit={tagToEdit}
+      selectTag={selectTag}
+      setTagToEdit={setTagToEdit}
+      />
     </div>
   );
 };
