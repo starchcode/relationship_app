@@ -4,5 +4,5 @@ import axios from "axios";
 //   baseURL: "http://localhost:4000"
 // });
 export default axios.create({
-  baseURL: "http://localhost:4000"
+  baseURL: "https://relationshipapp-starchcode.herokuapp.com"
 });
