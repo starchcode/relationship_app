@@ -4,6 +4,7 @@ import "./app.css";
 import Input from "./Input";
 import Server from "./Server";
 import Main from "./Main";
+import MessageBox from './MessageBox';
 
 const App = () => {
   const [people, setPeople] = useState([]);
@@ -12,6 +13,8 @@ const App = () => {
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [tagToEdit, setTagToEdit] = useState("");
+  const [message, setMessage] = useState()
+  const [error, setError] = useState();
 
   //Select people and tags
   const selectHandler = (e) => {
@@ -66,6 +69,7 @@ const App = () => {
   useEffect(() => {
     data();
   }, []);
+
   const insertData = async (newData, table) => {
     if (
       table == "relationship" &&
@@ -116,10 +120,6 @@ const App = () => {
   const dbQuery = async (buttonType) => {
     console.log("requested query: ", buttonType);
 
-    if (buttonType == "submitRel") {
-      const request = await Server.post("/");
-    }
-
     if (buttonType == "reset_db") {
       const request = await Server.get("/reset").then((res) => {
         if (res.status === 200) {
@@ -127,6 +127,19 @@ const App = () => {
           data();
         }
       });
+    }
+
+    if(buttonType == 'search'){
+      const params = {
+        firstPerson: selectPerson[0],
+        secondPerson: selectPerson[1],
+        tag: selectTag[0]
+      }
+      console.log('here is your params: ',params);
+      const request = await Server.get('/search', {
+        params: params
+      })
+      .then(res => console.log(res))
     }
   };
 
@@ -146,6 +159,15 @@ const App = () => {
         selectPerson={selectPerson}
         selectTag={selectTag}
         loaded={loaded}
+      />
+      <MessageBox 
+      message={message}
+      setMessage={setMessage}
+      error={error}
+      selectPerson={selectPerson}
+      selectTag={selectTag}
+      people={people}
+      relationshipTags={relationshipTags}
       />
       <Input
         insertData={insertData}

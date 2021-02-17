@@ -49,6 +49,7 @@ const Input = ({
     }
     if (buttonType == "search") {
       console.log(buttonType, " clicked!");
+      dbQuery(buttonType);
     }
     if (buttonType == "reset_db") {
       console.log(buttonType, " clicked!");

@@ -42,37 +42,37 @@ class RelationshipFinder {
     let allLength = this.result.map(answer => {
       return answer.length
     })
-    
+    if (this.result.length < 1) return [];
     var minLengthIndex = allLength.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0);
-    this.shortestResult= [...this.result[minLengthIndex]]
+    this.shortestResult= [...this.result[minLengthIndex]] //not itterable?!
     console.log('shortest result is: ',this.shortestResult)
     return this.shortestResult
   }
   
   search(){
-    rel.dbContent.forEach((init, index) => {
+    this.dbContent.forEach((init, index) => {
   if (init[0] ==  this.startingElement) this.traverse(index, this.dbContent[index], this.startingElement)
 })
   }
 }
 
-let relationships = [
-  [1, "x", 2], 
-  [2, "x", 1],
-  [1, "x", 4], 
-  [5, "x", 4], 
-  [2, "x", 3],
-  [5, 'x', 1], 
-  [3, "x", 5], 
-  [3, "x", 4],
-  [5, "x", 8888],
-];
+// let relationships = [
+//   [1, "x", 2], 
+//   [2, "x", 1],
+//   [1, "x", 4], 
+//   [5, "x", 4], 
+//   [2, "x", 3],
+//   [5, 'x', 1], 
+//   [3, "x", 5], 
+//   [3, "x", 4],
+//   [5, "x", 8888],
+// ];
 
-
+module.exports = RelationshipFinder;
 // EXAMPLE OF USE
 // let rel = new RelationshipFinder(relationships,1, 4); //Array, startingElement, target
 
 // rel.search(); //search it
-// console.log('all results', rel.result) //see all results if you want to see all results
+// // console.log('all results', rel.result) //see all results if you want to see all results
 // rel.shortestRelationship(); //Look for shortest result and log it to the console
 

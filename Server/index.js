@@ -25,6 +25,9 @@ app.use('/add', add);
 const edit = require('./edit');
 app.use('/edit', edit);
 
+const search = require('./search');
+app.use('/search', search)
+
 app.listen(PORT, ()=> {
     console.log(`Server is listening on port ${PORT}`);
 })
