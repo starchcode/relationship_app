@@ -46,7 +46,7 @@ const [searchText, setSearchText] = useState()
   }, [selectPerson, selectTag]);
 
   useEffect(() => {
-      const result = nameFinder(searchResult[0], searchResult[1], searchResult[2])
+      const result = nameFinder(searchResult[0], searchResult[1], searchResult[searchResult.length-1])
       console.log('current search result: ', result)
       if(searchResult.length){
         let text = `Closest relationship: ${result[0].person} is ${result[1].tag} of ${result[2].person}`  

@@ -31,7 +31,7 @@ search.get("/", (req, res) => {
     try{
         rel.search();
         const shortestResult = rel.shortestRelationship();
-    
+        console.log(shortestResult)
         res.send({shortestResult});
     }catch(e){
         console.log('error while searching', e)

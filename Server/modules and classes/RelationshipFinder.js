@@ -20,7 +20,8 @@ class RelationshipFinder {
     for (let i = currentColumn + 1; i < this.dbContent.length; i++) {
      
     //if our last element is equal our next element's first row
-      if (lastElement == this.dbContent[i][0] && startingElement !== this.dbContent[i][this.dbContent[0].length-1]) {
+
+      if (lastElement == this.dbContent[i][0] && startingElement !== this.dbContent[i][this.dbContent[0].length-1] && this.dbContent[currentColumn][0] !== this.dbContent[i][2]) {
         let nextColumn = [...this.dbContent[i]]
         nextColumn.shift(); // remove first element
         nextResult = [...currentResult, ...nextColumn];
@@ -29,7 +30,7 @@ class RelationshipFinder {
     } //also look for target before current column!
     for (let i = currentColumn - 1; i > 0; i--) {
       
-      if (lastElement == this.dbContent[i][0] && startingElement !== this.dbContent[i][this.dbContent[0].length-1]) {
+      if (lastElement == this.dbContent[i][0] && startingElement !== this.dbContent[i][this.dbContent[0].length-1] && this.dbContent[currentColumn][0] !== this.dbContent[i][2]) {
         let nextColumn = [...this.dbContent[i]]
         nextColumn.shift(); // remove first element
         nextResult = [...currentResult, ...nextColumn];
@@ -42,11 +43,11 @@ class RelationshipFinder {
     let allLength = this.result.map(answer => {
       return answer.length
     })
-    if (this.result.length < 1) return [];
+    if(!this.result.length) return [];
     var minLengthIndex = allLength.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0);
-    this.shortestResult= [...this.result[minLengthIndex]] //not itterable?!
+    this.shortestResult= [...this.result[minLengthIndex]]
     console.log('shortest result is: ',this.shortestResult)
-    return this.shortestResult
+    return this.shortestResult;
   }
   
   search(){
