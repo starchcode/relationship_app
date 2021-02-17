@@ -6,7 +6,6 @@ const db = new sqlite3.Database('./relation.db');
 add.post('/', (req, res)=> {
     const table = req.body.table;
     const column = req.body.table == 'people'? 'person': 'tag'; //people or tag column
-    //  const relationshipColumn 
 
     db.run(`INSERT INTO ${table} (${column}) VALUES($person)`, 
     {
@@ -35,5 +34,6 @@ add.post('/', (req, res)=> {
         })
     })
 })
+
 
 module.exports = add;

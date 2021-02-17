@@ -22,6 +22,9 @@ app.use('/reset', reset);
 const add = require('./add');
 app.use('/add', add);
 
+const edit = require('./edit');
+app.use('/edit', edit);
+
 app.listen(PORT, ()=> {
     console.log(`Server is listening on port ${PORT}`);
 })

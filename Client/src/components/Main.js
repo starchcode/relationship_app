@@ -1,4 +1,4 @@
-const Main = ({people, relationshipTags, loaded, relHandler, selectPerson, selectTag}) => {
+const Main = ({people, relationshipTags, loaded, selectHandler, selectPerson, selectTag}) => {
 
   const renderedPeople = people.map(({ person, id }) => {
 
@@ -35,12 +35,12 @@ const Main = ({people, relationshipTags, loaded, relHandler, selectPerson, selec
   });
 
   return (
-    <main className="flex" onClick={e => relHandler(e)}>
+    <main className="flex" onClick={e => selectHandler(e)}>
       <div className="flex wrap allItems">
         {loaded ? renderedPeople : "loading..."}
       </div>
       <div className="midLine"></div>
-      <div className="flex wrap allItems" division='tagSide'>
+      <div className="flex wrap allItems">
         {loaded ? renderedRelationshipTags : "loading..."}
       </div>
     </main>

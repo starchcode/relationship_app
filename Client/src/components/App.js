@@ -15,13 +15,15 @@ const App = () => {
   const [tagToEdit, setTagToEdit] = useState('')
 
 //Select people and tags
-  const relHandler = (e) => {
+  const selectHandler = (e) => {
     let target = e.target.getAttribute("button-type");
     let id = e.target.getAttribute("identity");
-    let division = e.target.getAttribute('division')
-    // console.log(val);
 
-    if(division == 'tagSide') setSelectTag([]) //unselect
+
+    if(e.target.parentNode.nodeName === 'MAIN' ){ //unselect
+      setSelectTag([]) 
+      setTagToEdit('')
+    } 
     if (e.target.nodeName !== "BUTTON") return; //Do nothing if not a button
 
     if (target === "person") {
@@ -49,18 +51,20 @@ const App = () => {
 //Fetch Data
 const data = async () => {
   await Server.get("/data").then((res) => {
-    console.log(res.data.people)
+    // console.log(res.data.people)
     setPeople(res.data.people); 
     setRelationshipTags(res.data.tags); 
     setLoaded(true);
     // console.log('loaded', people, relationshipTags);
   });
 };
+
   useEffect(() => {
     data();
   }, []);
 
 const insertData = async (newData, table)=> {
+
   const request = await Server.post('/add',
   {
     newData: newData,
@@ -79,6 +83,32 @@ const insertData = async (newData, table)=> {
   })
 }
 
+const editData = async (newData, table) => {
+  const request = await Server.put('/edit/' + selectTag, {
+    newData: tagToEdit,
+    table: table
+  }).then(res => {
+    console.log(res.status)
+      setSelectTag([])
+      setTagToEdit('')
+      data();
+
+  }).catch(e=> {
+    console.log(e.response.data.message)
+  })
+}
+
+const dbQuery = async (buttonType) => {
+  console.log('requested query: ', buttonType)
+  const request = await Server.get('/reset')
+  .then(res => {
+    if(res.status === 200){
+      console.log('db reset done!', res.status)
+      data();
+    }
+  })
+}
+
   return (
     <div>
       <h1>Relationship App</h1>
@@ -91,7 +121,7 @@ const insertData = async (newData, table)=> {
        <Main
         people={people}
         relationshipTags={relationshipTags}
-        relHandler={relHandler}
+        selectHandler={selectHandler}
         selectPerson={selectPerson}
         selectTag={selectTag}
         loaded={loaded}
@@ -101,6 +131,8 @@ const insertData = async (newData, table)=> {
       tagToEdit={tagToEdit}
       selectTag={selectTag}
       setTagToEdit={setTagToEdit}
+      editData={editData}
+      dbQuery={dbQuery}
       />
     </div>
   );
