@@ -45,6 +45,7 @@ const Input = ({
 
     if (buttonType == "submitRel") {
       console.log(buttonType, " clicked!");
+      insertData(undefined, 'relationship');
     }
     if (buttonType == "search") {
       console.log(buttonType, " clicked!");

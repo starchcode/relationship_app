@@ -1,7 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/Volumes/47 HQ/Documents/FullStack apps/Relationship Builder App/Server/relation.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1343"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainpeople"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="people" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="0"/></sort><column_widths><column index="1" value="104"/><column index="2" value="43"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats><column index="2" value=""/></display_formats><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="people_test" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="18"/><column index="2" value="36"/><column index="3" value="85"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="relationship" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="58"/><column index="2" value="85"/><column index="3" value="40"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="tag" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="18"/><column index="2" value="170"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE relationship(
-	people_id INTEGER REFERENCES people(id) ON DELETE CASCADE,
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/Volumes/47 HQ/Documents/FullStack apps/Relationship Builder App/Server/relation.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3074"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainpeople"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="people" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="0"/></sort><column_widths><column index="1" value="18"/><column index="2" value="50"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats><column index="2" value=""/></display_formats><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="people_test" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="18"/><column index="2" value="36"/><column index="3" value="85"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="relationship" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="58"/><column index="2" value="85"/><column index="3" value="40"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="tag" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="18"/><column index="2" value="170"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE relationship(
+	people_id INTEGER REFERENCES people (id) ON DELETE CASCADE,
 	relationship_id INTEGER  REFERENCES people(id) ON DELETE CASCADE,
-	tag_id REFERENCES tag(id) ON DELETE CASCADE
+	tag_id INTEGER REFERENCES tag(id) ON DELETE CASCADE
+);
+
+CREATE TABLE relationship (
+	id INTEGER NOT NULL,
+	people_id INTEGER NOT NULL,
+	relationship_id INTEGER NOT NULL,
+	tag_id INTEGER NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY (people_id) REFERENCES people (id) 
+            ON DELETE CASCADE ON UPDATE NO ACTION,
+	FOREIGN KEY (relationship_id) REFERENCES people (id) 
+            ON DELETE CASCADE ON UPDATE NO ACTION,
+	FOREIGN KEY (tag_id) REFERENCES tag (id) 
+            ON DELETE CASCADE ON UPDATE NO ACTION
+	UNIQUE (people_id, relationship_id, tag_id)
 );
 
 INSERT INTO tag (tag) VALUES('father');
@@ -10,8 +25,20 @@ INSERT INTO people (people) VALUES('Arthur');
 
 INSERT INTO relationship (people_id, relationship_id, tag_id ) VALUES(5, 1, 1);
 
+INSERT INTO relationship (people_id, relationship_id, tag_id ) VALUES(3, 1, 4);
+
 DROP TABLE people;
 DELETE FROM tag  WHERE id = 1;
 
 ALTER TABLE people
-RENAME COLUMN 'people' TO 'person';</sql><current_tab id="0"/></tab_sql></sqlb_project>
+RENAME COLUMN 'people' TO 'person';
+
+ALTER TABLE relationship
+ADD COLUMN id;
+
+DROP TABLE IF EXISTS relationship;
+
+PRAGMA table_info(relationship);
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>

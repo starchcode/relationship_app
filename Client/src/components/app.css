@@ -63,4 +63,5 @@ button{
 .allItems{
     flex-basis: 200px;
     padding: 40px 30px;
+    height: 100%;
 }

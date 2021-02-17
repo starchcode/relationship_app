@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 
-function dbReset () {
+function DbReset() {
     fs.copyFile('./db_backup/relation.db', './relation.db', (err) => {
         if (err) throw err;
         console.log('dB reset!');
@@ -13,4 +13,4 @@ function dbReset () {
 
 }
 
-module.exports = dbReset;
+module.exports = DbReset;

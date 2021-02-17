@@ -1,10 +1,10 @@
 const reset = require('express').Router();
-const dbReset = require('./reset_dB');
+const DbReset = require('./modules and classes/DbReset');
 
 
 reset.get('/', (req, res)=> {
-    dbReset();
-    res.send('db reset');
+    DbReset();
+    res.send('db reset done!');
 })
 
 module.exports = reset;

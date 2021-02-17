@@ -5,30 +5,34 @@ import Input from "./Input";
 import Server from "./Server";
 import Main from "./Main";
 
-
 const App = () => {
-  const [people, setPeople] = useState([])
+  const [people, setPeople] = useState([]);
   const [relationshipTags, setRelationshipTags] = useState([]);
   const [selectPerson, setSelectPerson] = useState([]);
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [tagToEdit, setTagToEdit] = useState('')
+  const [tagToEdit, setTagToEdit] = useState("");
 
-//Select people and tags
+  //Select people and tags
   const selectHandler = (e) => {
     let target = e.target.getAttribute("button-type");
     let id = e.target.getAttribute("identity");
 
-
-    if(e.target.parentNode.nodeName === 'MAIN' ){ //unselect
-      setSelectTag([]) 
-      setTagToEdit('')
-    } 
+    if (e.target.parentNode.nodeName === "MAIN") {
+      //unselect
+      setSelectTag([]);
+      setSelectPerson([]);
+      setTagToEdit("");
+    }
     if (e.target.nodeName !== "BUTTON") return; //Do nothing if not a button
 
     if (target === "person") {
-      if (selectPerson.find((person) => person == id)) {
-        return null;
+      if (selectPerson.find((person) => person == id)) { //unselect
+        const removeIndex = selectPerson.findIndex((person) => person != id);
+        if (removeIndex == -1) {
+          return setSelectPerson([]);
+        }
+        return setSelectPerson([...selectPerson[removeIndex]]);
       }
       if (selectPerson.length > 1) {
         setSelectPerson(selectPerson.shift());
@@ -48,66 +52,83 @@ const App = () => {
     }
   };
 
-//Fetch Data
-const data = async () => {
-  await Server.get("/data").then((res) => {
-    // console.log(res.data.people)
-    setPeople(res.data.people); 
-    setRelationshipTags(res.data.tags); 
-    setLoaded(true);
-    // console.log('loaded', people, relationshipTags);
-  });
-};
+  //Fetch Data
+  const data = async () => {
+    await Server.get("/data").then((res) => {
+      // console.log(res.data.people)
+      setPeople(res.data.people);
+      setRelationshipTags(res.data.tags);
+      setLoaded(true);
+      // console.log('loaded', people, relationshipTags);
+    });
+  };
 
   useEffect(() => {
     data();
   }, []);
-
-const insertData = async (newData, table)=> {
-
-  const request = await Server.post('/add',
-  {
-    newData: newData,
-    table: table
-  }).then(res=> {
-    if(res.status < 400){
-      if(res.data.person == newData){
-        console.log('new data ', newData, ' added to table ', table);
-      }else if(res.data.tag == newData){
-        console.log('new data ', newData, ' added to table ', table);
-      }
-      data();
+  const insertData = async (newData, table) => {
+    if (
+      table == "relationship" &&
+      selectPerson.length == 2 &&
+      selectTag.length == 1
+    ) {
+      const request = await Server.post(`/add/newdata/${table}`, {
+        person1: selectPerson[0],
+        relationshipTag: selectTag.toString(),
+        person2: selectPerson[1],
+      }).then((res) => console.log(res.status, res.data));
+    } else if (table == "people" || table == "tag") {
+      const request = await Server.post(`/add/newdata/peopleandtags/${table}`, {
+        newData: newData,
+      })
+        .then((res) => {
+          if (res.status < 400) {
+            if (res.data.person == newData) {
+              console.log("new data ", newData, " added to table ", table);
+            } else if (res.data.tag == newData) {
+              console.log("new data ", newData, " added to table ", table);
+            }
+            data();
+          }
+        })
+        .catch((e) => {
+          console.log(e.response.data.message);
+        });
     }
-  }).catch(e => {
-    console.log(e.response.data.message);
-  })
-}
+  };
 
-const editData = async (newData, table) => {
-  const request = await Server.put('/edit/' + selectTag, {
-    newData: tagToEdit,
-    table: table
-  }).then(res => {
-    console.log(res.status)
-      setSelectTag([])
-      setTagToEdit('')
-      data();
+  const editData = async (newData, table) => {
+    const request = await Server.put("/edit/" + selectTag, {
+      newData: tagToEdit,
+      table: table,
+    })
+      .then((res) => {
+        console.log(res.status);
+        setSelectTag([]);
+        setTagToEdit("");
+        data();
+      })
+      .catch((e) => {
+        console.log(e.response.data.message);
+      });
+  };
 
-  }).catch(e=> {
-    console.log(e.response.data.message)
-  })
-}
+  const dbQuery = async (buttonType) => {
+    console.log("requested query: ", buttonType);
 
-const dbQuery = async (buttonType) => {
-  console.log('requested query: ', buttonType)
-  const request = await Server.get('/reset')
-  .then(res => {
-    if(res.status === 200){
-      console.log('db reset done!', res.status)
-      data();
+    if (buttonType == "submitRel") {
+      const request = await Server.post("/");
     }
-  })
-}
+
+    if (buttonType == "reset_db") {
+      const request = await Server.get("/reset").then((res) => {
+        if (res.status === 200) {
+          console.log("db reset done!", res.status);
+          data();
+        }
+      });
+    }
+  };
 
   return (
     <div>
@@ -118,7 +139,7 @@ const dbQuery = async (buttonType) => {
         relationship between them.
       </p>
 
-       <Main
+      <Main
         people={people}
         relationshipTags={relationshipTags}
         selectHandler={selectHandler}
@@ -127,12 +148,12 @@ const dbQuery = async (buttonType) => {
         loaded={loaded}
       />
       <Input
-      insertData={insertData}
-      tagToEdit={tagToEdit}
-      selectTag={selectTag}
-      setTagToEdit={setTagToEdit}
-      editData={editData}
-      dbQuery={dbQuery}
+        insertData={insertData}
+        tagToEdit={tagToEdit}
+        selectTag={selectTag}
+        setTagToEdit={setTagToEdit}
+        editData={editData}
+        dbQuery={dbQuery}
       />
     </div>
   );
