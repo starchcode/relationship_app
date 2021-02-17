@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use(morgan('dev'));
 
+app.get('/', (req, res) => res.send('HIII'))
 
 const data = require('./data');
 app.use('/data', data);
