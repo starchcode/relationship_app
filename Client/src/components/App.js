@@ -15,6 +15,7 @@ const App = () => {
   const [tagToEdit, setTagToEdit] = useState("");
   const [message, setMessage] = useState()
   const [error, setError] = useState();
+  const [searchResult, setSearchResult] = useState([])
 
   //Select people and tags
   const selectHandler = (e) => {
@@ -132,14 +133,17 @@ const App = () => {
     if(buttonType == 'search'){
       const params = {
         firstPerson: selectPerson[0],
-        secondPerson: selectPerson[1],
-        tag: selectTag[0]
+        secondPerson: selectPerson[1]
       }
       console.log('here is your params: ',params);
       const request = await Server.get('/search', {
         params: params
       })
-      .then(res => console.log(res))
+      .then(res => {
+        console.log('search result received', res.data.shortestResult);
+        setSearchResult(res.data.shortestResult);
+
+      })
     }
   };
 
@@ -168,6 +172,7 @@ const App = () => {
       selectTag={selectTag}
       people={people}
       relationshipTags={relationshipTags}
+      searchResult={searchResult}
       />
       <Input
         insertData={insertData}

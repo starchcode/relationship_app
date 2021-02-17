@@ -65,3 +65,15 @@ button{
     padding: 40px 30px;
     height: 100%;
 }
+
+.messages{
+    flex-flow: column;
+    text-align: center;
+    /* opacity: 0.1; */
+}
+.messages div{
+    padding: 0.5rem;
+}
+.searchResult{
+    opacity: 0.3;
+}

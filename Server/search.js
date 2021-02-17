@@ -6,6 +6,7 @@ const db = new sqlite3.Database("./relation.db");
 const RelationshipFinder = require("./modules and classes/RelationshipFinder");
 
 search.get("/", (req, res) => {
+    if(!req.query.firstPerson || !req.query.secondPerson) return res.status(403).send({message: 'Not enough data to compare'})
   console.log("here is your request query: ", req.query);
   let allData;
   db.all("SELECT * FROM relationship", function (err, rows) {
@@ -27,13 +28,18 @@ search.get("/", (req, res) => {
       req.query.firstPerson,
       req.query.secondPerson
     );
-    rel.search();
-    rel.shortestRelationship()
-    console.log('result: ', rel.result)
+    try{
+        rel.search();
+        const shortestResult = rel.shortestRelationship();
+    
+        res.send({shortestResult});
+    }catch(e){
+        console.log('error while searching', e)
+    }
+
 
   });
 
-  res.send("request for search delivered");
 });
 
 module.exports = search;
