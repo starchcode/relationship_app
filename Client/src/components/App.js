@@ -59,11 +59,9 @@ const App = () => {
   //Fetch Data
   const data = async () => {
     await Server.get("/data").then((res) => {
-      // console.log(res.data.people)
       setPeople(res.data.people);
       setRelationshipTags(res.data.tags);
       setLoaded(true);
-      // console.log('loaded', people, relationshipTags);
     });
   };
 
@@ -108,7 +106,6 @@ const App = () => {
       table: table,
     })
       .then((res) => {
-        console.log(res.status);
         setSelectTag([]);
         setTagToEdit("");
         data();
@@ -119,12 +116,11 @@ const App = () => {
   };
 
   const dbQuery = async (buttonType) => {
-    console.log("requested query: ", buttonType);
+
 
     if (buttonType == "reset_db") {
       const request = await Server.get("/reset").then((res) => {
         if (res.status === 200) {
-          console.log("db reset done!", res.status);
           data();
         }
       });
@@ -135,13 +131,17 @@ const App = () => {
         firstPerson: selectPerson[0],
         secondPerson: selectPerson[1]
       }
-      console.log('here is your params: ',params);
       const request = await Server.get('/search', {
         params: params
       })
       .then(res => {
-        console.log('search result received', res.data.shortestResult);
-        setSearchResult(res.data.shortestResult);
+        if(res.status < 400){
+          console.log('search result received', res.data.shortestResult);
+          setSearchResult(res.data.shortestResult);
+          if(res.data.shortestResult.length < 1){
+            setError(true)
+          }else{ setError(false)}
+        }
 
       })
     }
@@ -168,6 +168,7 @@ const App = () => {
       message={message}
       setMessage={setMessage}
       error={error}
+      setError={setError}
       selectPerson={selectPerson}
       selectTag={selectTag}
       people={people}

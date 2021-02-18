@@ -75,5 +75,11 @@ button{
     padding: 0.5rem;
 }
 .searchResult{
-    opacity: 0.3;
+    opacity: 0.7;
+}
+.error {
+    color: tomato;
+}
+.success {
+    color: green;
 }
