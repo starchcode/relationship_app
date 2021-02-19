@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+let myTimeout;
 
 const MessageBox = ({
   message,
@@ -9,7 +10,7 @@ const MessageBox = ({
   setMessage,
   relationshipTags,
   people,
-  searchResult,
+  searchResult
 }) => {
   const [searchText, setSearchText] = useState();
 
@@ -46,27 +47,27 @@ const MessageBox = ({
   useEffect(() => {
 
 
-
     const result = nameFinder(
       searchResult[0],
       searchResult[1],
       searchResult[searchResult.length - 1]
     );
 
-    if (searchResult.length) {
+    if (searchResult.length && error == false) {
       let text = `Closest relationship: ${result[0].person} is ${result[1].tag} of ${result[2].person}`;
       setSearchText(text);
-      setTimeout(() => {
+      clearTimeout(myTimeout)
+      myTimeout = setTimeout(() => {
         setError(undefined);
         setSearchText('search result will show here...')
-      }, 5000);
+      }, 5000)
     } else {
       if (error) setSearchText("There is no relationship between them!");
-
-      setTimeout(() => {
+      clearTimeout(myTimeout)
+      myTimeout = setTimeout(() => {
         setError(undefined);
         setSearchText('search result will show here...')
-      }, 5000);
+      }, 5000)
 
     }
   }, [searchResult, error]);
@@ -74,7 +75,8 @@ const MessageBox = ({
   return (
     <div className="flex messages">
       <div>{message}</div>
-      <div className={`searchResult ` + `${error? 'error ': ''}` + `${error==false?'success': ''}`}>{searchText}</div>
+      <div className={`searchResult ` + `${error == true? 'error ': error == undefined ? '': 'success'}`}>{searchText}</div>
+      {/* `${error==false?'success': ''}` */}
     </div>
   );
 };

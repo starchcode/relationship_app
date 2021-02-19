@@ -18,14 +18,12 @@ const Input = ({
     let buttonType = e.target.getAttribute("button-type");
 
     if (buttonType == "newPerson") {
-      console.log(buttonType);
       if (!/\S/.test(newPerson)) return;
       insertData(newPerson.trim(), "people");
       setNewPerson("");
     }
 
     if (buttonType == "newTag") {
-      console.log(buttonType);
       if (!/\S/.test(newTag)) return;
       insertData(newTag.trim(), "tag");
       setNewTag("");
@@ -35,7 +33,6 @@ const Input = ({
       console.log(buttonType);
       if (!/\S/.test(tagToEdit)) return;
       editData(tagToEdit.trim(), "tag");
-      // setNewTag('');
     }
   };
 
@@ -44,15 +41,12 @@ const Input = ({
     let buttonType = e.target.getAttribute("button-type");
 
     if (buttonType == "submitRel") {
-      console.log(buttonType, " clicked!");
       insertData(undefined, 'relationship');
     }
     if (buttonType == "search") {
-      console.log(buttonType, " clicked!");
       dbQuery(buttonType);
     }
     if (buttonType == "reset_db") {
-      console.log(buttonType, " clicked!");
       dbQuery(buttonType);
     }
   };

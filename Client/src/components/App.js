@@ -14,7 +14,7 @@ const App = () => {
   const [loaded, setLoaded] = useState(false);
   const [tagToEdit, setTagToEdit] = useState("");
   const [message, setMessage] = useState()
-  const [error, setError] = useState();
+  const [error, setError] = useState(undefined);
   const [searchResult, setSearchResult] = useState([])
 
   //Select people and tags
@@ -79,7 +79,14 @@ const App = () => {
         person1: selectPerson[0],
         relationshipTag: selectTag.toString(),
         person2: selectPerson[1],
-      }).then((res) => console.log(res.status, res.data));
+      }).then((res) => {
+        console.log(res.status, res.data)
+        if(res.status < 400) {
+          console.log('Relationship submitted: ' + selectPerson[0] + ' is ' + selectTag.toString() + ' of ' + selectPerson[1])
+
+
+        }
+      });
     } else if (table == "people" || table == "tag") {
       const request = await Server.post(`/add/newdata/peopleandtags/${table}`, {
         newData: newData,
@@ -102,7 +109,7 @@ const App = () => {
 
   const editData = async (newData, table) => {
     const request = await Server.put("/edit/" + selectTag, {
-      newData: tagToEdit,
+      newData: newData,
       table: table,
     })
       .then((res) => {
@@ -174,6 +181,7 @@ const App = () => {
       people={people}
       relationshipTags={relationshipTags}
       searchResult={searchResult}
+
       />
       <Input
         insertData={insertData}

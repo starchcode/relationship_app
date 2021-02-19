@@ -10,8 +10,6 @@ data.get('/', (req, res)=> {
         db.all('SELECT * FROM people', (err, rows)=> {
             if(err)  return res.status(400).send(err);
             people = rows;
-            return 'ok'
-
         });
         db.all('SELECT * FROM tag', (err, rows)=> {
             if(err)  return res.status(400).send(err);
