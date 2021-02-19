@@ -13,12 +13,11 @@ const MessageBox = ({
   searchResult,
 }) => {
   const [searchText, setSearchText] = useState();
-  const nameFinder = (param) => {
-    // console.log("results received", param);
+  
+  const nameFinder = (list) => {
     let result = [];
-    let statement = '';
-    if (param && param.length > 1) {
-      param.forEach((element, i) => {
+    if (list && list.length > 1) {
+      list.forEach((element, i) => {
         if (i % 2 == 1) {
           console.log(element);
           result[i] = relationshipTags.find((person) => person.id == element);
@@ -27,6 +26,12 @@ const MessageBox = ({
         }
       });
     }
+    return result;
+  }
+
+  const statementBuilder = (param) => {
+    let result = nameFinder(param);
+    let statement = '';
     if(result.length > 3 ){
       result.forEach((word, i) => {
         if(word.tag) return;
@@ -35,35 +40,27 @@ const MessageBox = ({
       });
     }else{
       result.forEach((word, i) => {
+        if(word == undefined) return statement += ' ... ' ;
+
         if (i == 1) return statement += word.tag + ' of ';
         if (i == 2) return statement += word.person + '.';
         statement += word.person + ' is '
       });
     }
-
     return statement;
   };
 
   useEffect(() => {
-    const result = nameFinder(selectPerson[0], selectTag[0], selectPerson[1]);
+    const result = statementBuilder([selectPerson[0], selectTag[0], selectPerson[1]]);
     if (selectPerson.length) {
-      let firstPerson = result[0];
-      let rel = result[1];
-      let secondPerson = result[2];
-      let newMessage = `${firstPerson ? firstPerson.person : "..."} is ${
-        rel ? rel.tag : "..."
-      } of ${
-        secondPerson ? secondPerson.person : "..."
-      } ? ('Search' or 'Submit' when ready)`;
-      setMessage(newMessage);
+      setMessage(result);
     } else {
       setMessage(undefined);
     }
   }, [selectPerson, selectTag]);
 
   useEffect(() => {
-
-    const result = nameFinder(searchResult);
+    const result = statementBuilder(searchResult);
     console.log("all results: ", result);
     if (searchResult.length && error == false) {
       let text = result;
