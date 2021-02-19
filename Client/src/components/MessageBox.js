@@ -10,21 +10,38 @@ const MessageBox = ({
   setMessage,
   relationshipTags,
   people,
-  searchResult
+  searchResult,
 }) => {
   const [searchText, setSearchText] = useState();
-
-  const nameFinder = (firstPerson, tag, secondPerson) => {
-
+  const nameFinder = (param) => {
+    // console.log("results received", param);
     let result = [];
-    result.length = 3;
+    let statement = '';
+    if (param && param.length > 1) {
+      param.forEach((element, i) => {
+        if (i % 2 == 1) {
+          console.log(element);
+          result[i] = relationshipTags.find((person) => person.id == element);
+        } else {
+          result[i] = people.find((tags) => tags.id == element);
+        }
+      });
+    }
+    if(result.length > 3 ){
+      result.forEach((word, i) => {
+        if(word.tag) return;
+        if(result.length - 1 == i) return statement += word.person;
+        if(word.person) statement += word.person + ' > ';
+      });
+    }else{
+      result.forEach((word, i) => {
+        if (i == 1) return statement += word.tag + ' of ';
+        if (i == 2) return statement += word.person + '.';
+        statement += word.person + ' is '
+      });
+    }
 
-    if (firstPerson) result[0] = people.find((tags) => tags.id == firstPerson);
-    if (tag) result[1] = relationshipTags.find((person) => person.id == tag);
-    if (secondPerson)
-      result[2] = people.find((person) => person.id == secondPerson);
-
-    return result;
+    return statement;
   };
 
   useEffect(() => {
@@ -46,15 +63,10 @@ const MessageBox = ({
 
   useEffect(() => {
 
-
-    const result = nameFinder(
-      searchResult[0],
-      searchResult[1],
-      searchResult[searchResult.length - 1]
-    );
-
+    const result = nameFinder(searchResult);
+    console.log("all results: ", result);
     if (searchResult.length && error == false) {
-      let text = `Closest relationship: ${result[0].person} is ${result[1].tag} of ${result[2].person}`;
+      let text = result;
       setSearchText(text);
       clearTimeout(myTimeout)
       myTimeout = setTimeout(() => {
@@ -75,7 +87,14 @@ const MessageBox = ({
   return (
     <div className="flex messages">
       <div>{message}</div>
-      <div className={`searchResult ` + `${error == true? 'error ': error == undefined ? '': 'success'}`}>{searchText}</div>
+      <div
+        className={
+          `searchResult ` +
+          `${error == true ? "error " : error == undefined ? "" : "success"}`
+        }
+      >
+        {searchText}
+      </div>
       {/* `${error==false?'success': ''}` */}
     </div>
   );
