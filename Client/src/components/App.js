@@ -5,6 +5,7 @@ import Input from "./Input";
 import Server from "./Server";
 import Main from "./Main";
 import MessageBox from './MessageBox';
+import DbStatus from './DbStatus';
 
 const App = () => {
   const [people, setPeople] = useState([]);
@@ -15,7 +16,9 @@ const App = () => {
   const [tagToEdit, setTagToEdit] = useState("");
   const [message, setMessage] = useState()
   const [error, setError] = useState(undefined);
-  const [searchResult, setSearchResult] = useState([])
+  const [searchResult, setSearchResult] = useState([]);
+  const [dbMessage, setDbMessage] = useState('status');
+  const [dbError, setDbError] = useState(undefined);
 
   //Select people and tags
   const selectHandler = (e) => {
@@ -92,17 +95,18 @@ const App = () => {
         newData: newData,
       })
         .then((res) => {
-          if (res.status < 400) {
             if (res.data.person == newData) {
-              console.log("new data ", newData, " added to table ", table);
+              setDbMessage('Success!: ' + 'New person "' + res.data.person + '" added!')
             } else if (res.data.tag == newData) {
-              console.log("new data ", newData, " added to table ", table);
+              setDbMessage('Success!: ' + 'New tag "' + res.data.tag + '" added!')
             }
+            setDbError(false);
             data();
-          }
         })
         .catch((e) => {
-          console.log(e.response.data.message);
+          setDbMessage('error while inserting data ' + e.response.data.message + ' make sure to not insert the same data!')
+          setDbError(true);
+          // console.log('error while inserting data ',e.response.data.message);
         });
     }
   };
@@ -115,6 +119,8 @@ const App = () => {
       .then((res) => {
         setSelectTag([]);
         setTagToEdit("");
+        setDbMessage('Success: tag edited successfuly!')
+        setDbError(false);
         data();
       })
       .catch((e) => {
@@ -181,7 +187,12 @@ const App = () => {
       people={people}
       relationshipTags={relationshipTags}
       searchResult={searchResult}
-
+      />
+      <DbStatus
+      dbMessage={dbMessage}
+      dbError={dbError}
+      setDbError={setDbError}
+      setDbMessage={setDbMessage}
       />
       <Input
         insertData={insertData}
