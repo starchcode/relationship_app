@@ -9,25 +9,29 @@ const db = new sqlite3.Database('./relation.db');
 
              db.all('SELECT * FROM people', (err, rows)=> {
                  if(err){
-                     next('error from getting people', err)
+                    //  next('error from getting people', err)
                  }  
                  people = rows;
              });
              db.all('SELECT * FROM tag', (err, rows)=> {
                  if(err){
-                    next('error from getting tag', err)
-                     return res.status(400).send(err);
+                    // next('error from getting tag', err)
+                    //  return res.status(400).send(err);
                 }  
                  tags = rows;
              });
              db.all('SELECT * FROM relationship', (err, rows)=> {
                 if(err){
-                    next('error from getting tag', err)
-                     return res.status(400).send(err);
+                    // next('error from getting relationship', err)
+                    //  return res.status(400).send(err);
                 }  
                  relationship = rows;
-
-                 res.send({people: people, tags: tags, relationship: relationship}) //send everything in last function call to avoid async issues. this way there's no need to create promises
+                if(people && tags && relationship){
+                    console.log('all good to send')
+                    res.send({people: people, tags: tags, relationship: relationship}) //send everything in last function call to avoid async issues. this way there's no need to create promises
+                }else{
+                    res.status(403).send({message: 'error while resetting'})
+                }
              });
           
        

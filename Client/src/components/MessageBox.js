@@ -19,7 +19,6 @@ const MessageBox = ({
     if (list && list.length > 1) {
       list.forEach((element, i) => {
         if (i % 2 == 1) {
-          console.log(element);
           result[i] = relationshipTags.find((person) => person.id == element);
         } else {
           result[i] = people.find((tags) => tags.id == element);
@@ -53,7 +52,7 @@ const MessageBox = ({
   useEffect(() => {
     const result = statementBuilder([selectPerson[0], selectTag[0], selectPerson[1]]);
     if (selectPerson.length) {
-      setMessage(result);
+      setMessage(result + '.?');
     } else {
       setMessage(undefined);
     }
@@ -61,7 +60,7 @@ const MessageBox = ({
 
   useEffect(() => {
     const result = statementBuilder(searchResult);
-    console.log("all results: ", result);
+
     if (searchResult.length && error == false) {
       let text = result;
       setSearchText(text);

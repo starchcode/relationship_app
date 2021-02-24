@@ -30,7 +30,6 @@ const Input = ({
     }
 
     if (buttonType == "editTag" && selectTag.length) {
-      console.log(buttonType);
       if (!/\S/.test(tagToEdit)) return;
       editData(tagToEdit.trim(), "tag");
     }

@@ -4,8 +4,8 @@ import "./app.css";
 import Input from "./Input";
 import Server from "./Server";
 import Main from "./Main";
-import MessageBox from './MessageBox';
-import DbStatus from './DbStatus';
+import MessageBox from "./MessageBox";
+import DbStatus from "./DbStatus";
 
 const App = () => {
   const [people, setPeople] = useState([]);
@@ -14,10 +14,10 @@ const App = () => {
   const [selectTag, setSelectTag] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [tagToEdit, setTagToEdit] = useState("");
-  const [message, setMessage] = useState()
+  const [message, setMessage] = useState();
   const [error, setError] = useState(undefined);
   const [searchResult, setSearchResult] = useState([]);
-  const [dbMessage, setDbMessage] = useState('status');
+  const [dbMessage, setDbMessage] = useState("status");
   const [dbError, setDbError] = useState(undefined);
 
   //Select people and tags
@@ -34,7 +34,8 @@ const App = () => {
     if (e.target.nodeName !== "BUTTON") return; //Do nothing if not a button
 
     if (target === "person") {
-      if (selectPerson.find((person) => person == id)) { //unselect
+      if (selectPerson.find((person) => person == id)) {
+        //unselect
         const removeIndex = selectPerson.findIndex((person) => person != id);
         if (removeIndex == -1) {
           return setSelectPerson([]);
@@ -48,6 +49,14 @@ const App = () => {
     }
 
     if (target === "tag") {
+      if (selectTag.find((tag) => tag == id)) {
+        //unselect
+        const removeIndex = selectTag.findIndex((tag) => tag != id);
+        if (removeIndex == -1) {
+          return setSelectTag([]);
+        }
+      }
+
       setTagToEdit(e.target.innerText);
       if (selectTag.find((tag) => tag == id)) {
         return null;
@@ -78,35 +87,51 @@ const App = () => {
       selectPerson.length == 2 &&
       selectTag.length == 1
     ) {
+      //submit relationship
       const request = await Server.post(`/add/newdata/${table}`, {
         person1: selectPerson[0],
         relationshipTag: selectTag.toString(),
         person2: selectPerson[1],
-      }).then((res) => {
-        console.log(res.status, res.data)
-        if(res.status < 400) {
-          console.log('Relationship submitted: ' + selectPerson[0] + ' is ' + selectTag.toString() + ' of ' + selectPerson[1])
-
-
-        }
-      });
+      })
+        .then((res) => {
+          if (res.status < 400) {
+            setDbError(false);
+            setDbMessage("Relationship submitted!");
+          }
+        })
+        .catch((e) => {
+          setDbError(true);
+          if (e.response.data.message == "SQLITE_CONSTRAINT") {
+            setDbMessage("This relationship was submitted before");
+          } else {
+            setDbMessage("Unknown error, see console!");
+            console.log(e.response.data.message);
+          }
+        });
     } else if (table == "people" || table == "tag") {
       const request = await Server.post(`/add/newdata/peopleandtags/${table}`, {
         newData: newData,
       })
         .then((res) => {
-            if (res.data.person == newData) {
-              setDbMessage('Success!: ' + 'New person "' + res.data.person + '" added!')
-            } else if (res.data.tag == newData) {
-              setDbMessage('Success!: ' + 'New tag "' + res.data.tag + '" added!')
-            }
-            setDbError(false);
-            data();
+          if (res.data.person == newData) {
+            setDbMessage(
+              "Success!: " + 'New person "' + res.data.person + '" added!'
+            );
+          } else if (res.data.tag == newData) {
+            setDbMessage(
+              "Success!: " + 'New tag "' + res.data.tag + '" added!'
+            );
+          }
+          setDbError(false);
+          data();
         })
         .catch((e) => {
-          setDbMessage('error while inserting data ' + e.response.data.message + ' make sure to not insert the same data!')
+          setDbMessage(
+            "error while inserting data " +
+              e.response.data.message +
+              " make sure to not insert the same data!"
+          );
           setDbError(true);
-          // console.log('error while inserting data ',e.response.data.message);
         });
     }
   };
@@ -119,44 +144,57 @@ const App = () => {
       .then((res) => {
         setSelectTag([]);
         setTagToEdit("");
-        setDbMessage('Success: tag edited successfuly!')
+        setDbMessage("Success: tag edited successfuly!");
         setDbError(false);
         data();
       })
       .catch((e) => {
-        console.log(e.response.data.message);
+        setDbError(true);
+        if (e.response.data.message === "SQLITE_CONSTRAINT") {
+          setDbMessage(
+            "This tag already exists! Change it to a different name!"
+          );
+        } else {
+          setDbMessage("Unknown error!");
+        }
       });
   };
 
   const dbQuery = async (buttonType) => {
-
-
     if (buttonType == "reset_db") {
-      const request = await Server.get("/reset").then((res) => {
-        if (res.status === 200) {
-          data();
-        }
-      });
+      const request = await Server.get("/reset")
+        .then((res) => {
+          if (res.status < 400) {
+            setDbError(false);
+            setDbMessage("Database reset successfully!");
+          }
+        })
+        .then(data())
+        .catch((e) => {
+          setDbError(true);
+          setDbMessage("error while resetting database: see console!");
+          console.log(e.response);
+        });
     }
 
-    if(buttonType == 'search'){
+    if (buttonType == "search") {
       const params = {
         firstPerson: selectPerson[0],
-        secondPerson: selectPerson[1]
-      }
-      const request = await Server.get('/search', {
-        params: params
-      })
-      .then(res => {
-        if(res.status < 400){
-          console.log('search result received', res.data.shortestResult);
+        secondPerson: selectPerson[1],
+      };
+      const request = await Server.get("/search", {
+        params: params,
+      }).then((res) => {
+        if (res.status < 400) {
+          //receiving search result
           setSearchResult(res.data.shortestResult);
-          if(res.data.shortestResult.length < 1){
-            setError(true)
-          }else{ setError(false)}
+          if (res.data.shortestResult.length < 1) {
+            setError(true);
+          } else {
+            setError(false);
+          }
         }
-
-      })
+      });
     }
   };
 
@@ -177,22 +215,22 @@ const App = () => {
         selectTag={selectTag}
         loaded={loaded}
       />
-      <MessageBox 
-      message={message}
-      setMessage={setMessage}
-      error={error}
-      setError={setError}
-      selectPerson={selectPerson}
-      selectTag={selectTag}
-      people={people}
-      relationshipTags={relationshipTags}
-      searchResult={searchResult}
+      <MessageBox
+        message={message}
+        setMessage={setMessage}
+        error={error}
+        setError={setError}
+        selectPerson={selectPerson}
+        selectTag={selectTag}
+        people={people}
+        relationshipTags={relationshipTags}
+        searchResult={searchResult}
       />
       <DbStatus
-      dbMessage={dbMessage}
-      dbError={dbError}
-      setDbError={setDbError}
-      setDbMessage={setDbMessage}
+        dbMessage={dbMessage}
+        dbError={dbError}
+        setDbError={setDbError}
+        setDbMessage={setDbMessage}
       />
       <Input
         insertData={insertData}
