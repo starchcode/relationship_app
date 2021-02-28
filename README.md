@@ -1,5 +1,5 @@
 # Relationship App
-> This is a full-stack app relationship builder app that helps organize the relationships between people. ([more](#general-info))
+> This is a CRUD app that helps organize the relationships between people. ([more](#general-info))
 
 ## Status: ![progress](https://img.shields.io/badge/Finished!-brightgreen 'progress')
 
