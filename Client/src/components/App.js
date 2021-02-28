@@ -201,9 +201,9 @@ const App = () => {
   return (
     <div>
       <h1>Relationship App</h1>
-      <p>1. Select two people and a tag to submit a relationship.</p>
+      <p>1. Select two people and a tag then pres 'Submit a Relationship' to relationship between people.</p>
       <p>
-        2. Select two people and press Lookup to see if there is any
+        2. Select two people and press 'Search' to see if there is any
         relationship between them.
       </p>
 
